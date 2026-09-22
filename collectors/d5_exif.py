@@ -67,7 +67,7 @@ class D5Exif(Collector):
                             id=fid(self.source, "exif_gps", f"{lat:.6f},{lon:.6f}", raw_ref=str(p)), source=self.source, kind="exif_gps",
                             value=f"({lat:.6f}, {lon:.6f})",
                             snippet=f"{p.name} GPS {lat:.6f},{lon:.6f}",
-                            asset_type="avatar",
+                            asset_type="avatar", asset_value=str(p),
                             url=f"https://www.openstreetmap.org/?mlat={lat:.6f}&mlon={lon:.6f}#map=16/{lat:.6f}/{lon:.6f}",
                             reach="public", confidence=1.0,
                             raw_ref=str(p),
@@ -85,7 +85,7 @@ class D5Exif(Collector):
                         id=fid(self.source, "exif_device", model or make or "unknown device", raw_ref=str(p)), source=self.source, kind="exif_device",
                         value=model or make or "unknown device",
                         snippet="; ".join(snippet_parts),
-                        asset_type="avatar",
+                        asset_type="avatar", asset_value=str(p),
                         reach="public", confidence=1.0,
                         raw_ref=str(p),
                     ))

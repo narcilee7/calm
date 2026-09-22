@@ -41,7 +41,9 @@ class D2Holehe(Collector):
             for probe in probes:
                 out: list[dict] = []
                 try:
-                    await probe(email, client, out)
+                    await asyncio.wait_for(probe(email, client, out), timeout=5.0)
+                except asyncio.TimeoutError:
+                    continue
                 except Exception:
                     continue
                 if polite:

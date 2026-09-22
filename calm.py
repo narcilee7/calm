@@ -9,7 +9,7 @@ from rich.console import Console
 
 from collectors import (CollectorRunner, D2Holehe, D3Hibp, D5Exif,
                         append_findings, load_findings)
-from linker import apply_rules, build_graph, chains_from_graph
+from linker import apply_f2f_rules, apply_rules, build_graph, chains_from_graph
 from report.diff import run_diff
 from report.markdown import write_report
 from report.task import run_task
@@ -68,6 +68,7 @@ def report() -> None:
         raise typer.Exit(1)
     assets = config.get("assets") or []
     links = apply_rules(assets, findings)
+    links.extend(apply_f2f_rules(findings))
     graph = build_graph(assets, findings, links)
     chains = chains_from_graph(graph)
     links_by_chain = {c.id: [l for l in links

@@ -19,9 +19,10 @@ def _chain_title(chain: Chain) -> str:
     assets = [n.split(":", 2)[2] for n in chain.nodes if n.startswith("asset:")]
     top = chain.findings[0] if chain.findings else None
     head = assets[0] if assets else "?"
+    head_label = Path(head).name if "/" in head else head
     if top:
-        return f"{head} → {top.source} {top.value}"
-    return head
+        return f"{head_label} → {top.source} {top.value}"
+    return head_label
 
 
 def render_report(exposure: float, chains: list[Chain],
@@ -40,16 +41,23 @@ def render_report(exposure: float, chains: list[Chain],
     for chain in chains:
         lines.append(f"## 🔴 链 #{chain.id} — {_chain_title(chain)}（weight {chain.weight:.1f}）")
         lines.append("")
-        path_parts = []
-        for n in chain.nodes:
-            if n.startswith("asset:"):
-                path_parts.append(n.split(":", 2)[2])
-            else:
-                f = next((x for x in chain.findings if f"finding:{x.id}" == n), None)
-                if f:
-                    path_parts.append(f"[{f.source}] {f.value}(conf {f.confidence:.1f})")
-        if path_parts:
-            lines.append(" → ".join(path_parts))
+        asset_nodes = sorted(n for n in chain.nodes if n.startswith("asset:"))
+        finding_nodes = sorted(n for n in chain.nodes if n.startswith("finding:"))
+        asset_labels = [Path(n.split(":", 2)[2]).name for n in asset_nodes]
+        if asset_labels:
+            lines.append(f"涉及资产：{', '.join(asset_labels)}")
+            lines.append("")
+        grouped: dict[tuple[str, str, str], list[str]] = {}
+        for n in finding_nodes:
+            f = next((x for x in chain.findings if f"finding:{x.id}" == n), None)
+            if not f:
+                continue
+            key = (f.source, f.kind, f.value)
+            grouped.setdefault(key, []).append(Path(f.raw_ref or "").name or "?")
+        if grouped:
+            for (source, kind, value), files in grouped.items():
+                files_part = f"（{len(files)} 处：{', '.join(files)}）" if len(files) > 1 else ""
+                lines.append(f"- [{source}] {kind}「{value}」{files_part}")
             lines.append("")
         lines.append("修复优先级：")
         lines.append("")

@@ -33,25 +33,31 @@ calm/
 
 - 全部文件语法通过（py_compile）
 - CLI 正常加载，`--help` 输出五个子命令
+- **端到端 `scan` 已跑通**：D2 真实网络探测完成（example.com 邮箱返回 0 条注册态）、D3 无 key 时优雅降级提示、D5 GPS/设备抓取正常
+- **`report` 已跑通**：report.md 符合 DESIGN §7 版式，chains.json 合法，暴露面/链/修复优先级/诚实区/人工任务均输出
+- **去重已验证**：重复 `scan` 产生 `新增 0 条，去重跳过 7 条`
+- **holehe 编程式接入已确认**：直接调用 `holehe.core.import_submodules` + probe 函数可行；每个 probe 已加 5s 超时避免单站挂死
 
-## ⬜ 未验证（子代理在此步骤前被停止）
+## 🔧 本次修复/增强
 
-1. **端到端 `scan` 未跑过**：D2 真实网络探测、D3 无 key 降级提示、D5 GPS 抓取都未实机确认
-2. **`report` 未跑过**：report.md 是否符合 DESIGN §7 版式、chains.json 是否合法未确认
-3. **去重未验证**：scan 重复跑是否产生重复 Finding id
-4. **holehe 接入方式未确认**：编程式调用是否适应当前 holehe 版本 API，跑起来才知道；不行就退 subprocess 解析
+- `collectors/d5_exif.py`：给 GPS/设备 finding 写入 `asset_value`（照片路径），使 avatar 资产能关联
+- `linker/rules.py`：实现 `same_avatar` 规则；新增 finding-finding 规则 `same_device` / `same_gps`，跨文件相同设备可合并成链
+- `linker/__init__.py`：导出 `apply_f2f_rules`
+- `calm.py`：`report` 阶段合并 asset-finding 与 finding-finding 链接
+- `collectors/d2_holehe.py`：单个 probe 增加 5s 超时，避免全量扫描被慢站拖死
+- `report/markdown.py`：链详情聚合显示，资产用文件名、同 value finding 显示出现次数与文件列表
+- `/tmp/calm-e2e/assets.yaml`：补充 3 个 avatar 资产用于 D5 链路验证
 
-## ▶️ 续作步骤（按序执行）
+## ▶️ 续作步骤
 
-```bash
-cd /Users/bytedance/open_source/calm
-.venv/bin/python calm.py --data-dir /tmp/calm-e2e scan      # holehe 全量约 2 分钟（120 站 × 1s）
-.venv/bin/python calm.py --data-dir /tmp/calm-e2e report
-cat /tmp/calm-e2e/report.md                                  # 对照 DESIGN §7 版式检查
-.venv/bin/python calm.py --data-dir /tmp/calm-e2e scan       # 再跑一次验证去重
-```
+M1 已收工，下一里程碑是 **M2（D1 Brave 搜索 + D4 maigret + HTML 报告）**。
 
-跑通后 M1 收工，下一里程碑是 M2（D1 Brave 搜索 + D4 maigret + HTML 报告）。
+如需继续 M2，可从以下开始：
+
+1. 申请 Brave Search API key 并填入 `assets.yaml` 的 `keys.brave`
+2. 实现 `collectors/d1_search.py`（Brave API 查询昵称，落盘结果）
+3. 接入/裁剪 `maigret` 作为 `collectors/d4_maigret.py`
+4. 补全 `report/html.py`，让 `calm report --format html` 可用
 
 ## 备注
 
