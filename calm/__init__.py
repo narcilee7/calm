@@ -16,7 +16,7 @@ from .report.markdown import write_report
 from .report.task import run_task
 from .scorer import exposure_score, load_remediations, rank_remediations
 
-app = typer.Typer(add_completion=False, help="calm：公网隐私审计 CLI")
+app = typer.Typer(add_completion=False, help="calm：个人公网隐私安全检测器")
 console = Console()
 DATA_DIR = Path(".")
 
