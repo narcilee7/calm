@@ -1,0 +1,32 @@
+# calm 资产清单。复制为 assets.yaml 后填写真实值。
+# assets.yaml 已被 gitignore，不会进版本库。
+#
+# 合规闸门（DESIGN §10）：type 为 phone/id 的资产未 verified:true 时，
+# 外部查询类 collector 会直接跳过并告警。
+
+profile:
+  name: "你的名字"
+
+assets:
+  - type: email
+    value: "you@example.com"
+    verified: false
+  - type: nickname
+    value: "你的昵称"
+    verified: false
+  - type: realname
+    value: "你的真名"
+    verified: false
+  # - type: phone
+  #   value: "13800000000"
+  #   verified: false   # 必须本机短信验证后改为 true 才会被查
+  # - type: avatar
+  #   value: "/path/to/avatar.jpg"
+
+keys:
+  # https://haveibeenpwned.com/API/Key 申请（~$3.5/月）；null 则 D3 跳过并提示
+  hibp: null
+
+settings:
+  exif_dirs: []      # 要扫的照片目录，如 ["/Users/you/Pictures"]
+  polite: true       # holehe 礼貌延迟开关（并发 1、每次调用间隔 ≥1s）

@@ -1,0 +1,131 @@
+# calm 修复知识库。每条声明它能断什么（breaks: link type / source / kind）和操作成本。
+# fixable: false 的条目进入报告"不可修复项（诚实区）"，note 给加固建议。
+
+- id: exif-strip-before-share
+  title: 分享照片前剥离 EXIF 元数据
+  applies_to: [exif_gps, exif_device, D5]
+  cost_minutes: 5
+  breaks: [exif_gps, exif_device]
+  note: |
+    macOS：预览.app 导出时勾选"删除位置信息"；命令行：exiftool -all= -overwrite_original *.jpg。
+    社交 App 内关闭"发送原图/包含位置"选项。已发出去的历史照片无法召回，按泄露处理。
+
+- id: exif-gps-disable-camera
+  title: 关闭相机 App 的位置记录
+  applies_to: [exif_gps, D5]
+  cost_minutes: 2
+  breaks: [exif_gps]
+  note: 手机相机设置中关闭"记录地理位置"。iPhone：设置→隐私与安全性→定位服务→相机→关闭。
+
+- id: hibp-breach-rotate-password
+  title: 轮换已泄露站点的密码（唯一密码 + 管理器）
+  applies_to: [breach, D3]
+  cost_minutes: 30
+  breaks: [breach]
+  note: 对每条泄露事件：该站点密码立即更换，且不得与其他站点复用。用密码管理器生成唯一随机密码。已泄露的旧密码按"公开"对待。
+
+- id: hibp-breach-2fa
+  title: 给泄露邮箱关联的所有重要账号开两步验证
+  applies_to: [breach, D3]
+  cost_minutes: 20
+  breaks: [breach]
+  note: 邮箱是重置入口，优先级最高：邮箱→支付→社交→其他。优先 TOTP/硬件 key，避免短信（SIM 交换风险）。
+
+- id: hibp-unfixable-hardening
+  title: 历史泄露不可删除，接受并加固
+  applies_to: [breach, D3]
+  cost_minutes: 15
+  breaks: []
+  fixable: false
+  note: 已进泄露库的明文数据无法召回（DESIGN 诚实边界）。加固：1) 该邮箱不再绑定新账号；2) 以泄露字段（如身份证号）做验证的账号改绑；3) 警惕定向钓鱼（对方知道你的真实信息）。
+
+- id: reg-github-anonymize
+  title: GitHub：改 noreply 邮箱 + 清理个人资料
+  applies_to: [account_registration, D2]
+  cost_minutes: 10
+  breaks: [account_registration, same_email]
+  note: Settings→Emails 勾选 "Keep my email addresses private"，提交改用 username@users.noreply.github.com；Profile 中删除真实姓名/公司/位置；检查历史 commit 是否含真实邮箱（git log --author）。
+
+- id: reg-weibo-cleanup
+  title: 微博：注销或匿名化历史账号
+  applies_to: [account_registration, D2]
+  cost_minutes: 15
+  breaks: [account_registration, same_nickname]
+  note: 不再用的账号直接注销（设置→账号与安全→注销）。保留则：改昵称去重、删除含定位/学校的旧微博、关闭"允许通过手机号/邮箱找到我"。
+
+- id: reg-zhihu-cleanup
+  title: 知乎：匿名化回答与个人信息
+  applies_to: [account_registration, D2]
+  cost_minutes: 15
+  breaks: [account_registration, same_nickname]
+  note: 设置→隐私：关闭"可通过手机号找到我"；昵称改为非唯一标识；逐个检查高赞回答是否暴露学校/公司/位置，必要时匿名化。
+
+- id: reg-bilibili-cleanup
+  title: B 站：改资料 + 清历史动态
+  applies_to: [account_registration, D2]
+  cost_minutes: 10
+  breaks: [account_registration, same_nickname]
+  note: 个人空间改昵称/签名去除真实信息；批量删除早期动态（可能含学校定位）；隐私设置关闭手机号搜索。
+
+- id: reg-douban-cleanup
+  title: 豆瓣：注销僵尸账号 + 清理小组发言
+  applies_to: [account_registration, D2]
+  cost_minutes: 20
+  breaks: [account_registration, same_nickname]
+  note: 豆瓣账号历史发言关联度高，优先注销不用的；在用的删除含真名/学校的帖子和日记；城市/公司字段清空。
+
+- id: reg-generic-dormant-delete
+  title: 通用：注销不再登录的站点账号
+  applies_to: [account_registration, D2]
+  cost_minutes: 10
+  breaks: [account_registration]
+  note: D2 探出但你不再用的站点：justdelete.me 查注销入口。 dormant 账号是攻击者的拼图素材，注销比改资料更彻底。
+
+- id: reg-generic-email-alias
+  title: 注册专用邮箱别名，切断邮箱↔站点的横向关联
+  applies_to: [account_registration, D2]
+  cost_minutes: 20
+  breaks: [same_email]
+  note: 用一个专用别名（或子域名 catch-all）注册新服务，主邮箱不外显。已注册站点逐步改绑。断的是"同邮箱"这条 link 的横向扩展能力。
+
+- id: reg-generic-username-decouple
+  title: 各平台使用不同昵称，打破昵称横向关联
+  applies_to: [account_registration, same_nickname, D2]
+  cost_minutes: 15
+  breaks: [same_nickname]
+  note: 人肉搜索的第一轴是"同一昵称跨平台"。重要平台（求职/金融/主社交）用互不相干的昵称；一次性改完，别逐平台试探。
+
+- id: reg-gravatar-check
+  title: Gravatar：头像与邮箱绑定关系检查
+  applies_to: [account_registration, D2]
+  cost_minutes: 5
+  breaks: [account_registration, same_email]
+  note: Gravatar 头像跨站复用，把邮箱和公开形象绑死。若 D2 命中：更换头像或删除 profile，阻断"头像 hash"关联路径。
+
+- id: search-self-audit-nickname
+  title: 搜索引擎自查：昵称
+  applies_to: [nickname]
+  cost_minutes: 30
+  breaks: [text_hit, same_nickname]
+  note: 人工任务：Bing/Google 搜 "你的昵称"，前 3 页逐个看是否关联到真实身份；截图记录后，逐条处理（删帖/改昵称/联系站长）。结果贴回 calm task --submit。
+
+- id: search-self-audit-realname
+  title: 搜索引擎自查：真名
+  applies_to: [realname]
+  cost_minutes: 30
+  breaks: [text_hit]
+  note: 人工任务：搜 "真名" 和 "真名+城市/学校/公司" 组合。命中的页面判断是否为本人发布，能删则删；第三方页面尝试联系删除或申请搜索引擎移除（百度/Bing 均有入口）。
+
+- id: search-self-audit-phone
+  title: 搜索引擎自查：手机号
+  applies_to: [phone]
+  cost_minutes: 30
+  breaks: [text_hit]
+  note: 人工任务：搜手机号（含带空格/连字符变体）。命中旧帖（快递单、租房、二手交易）立即删帖；支付宝/微信"通过手机号找到我"关闭。
+
+- id: phone-privacy-settings
+  title: 关闭"通过手机号找到我"（微信/QQ/知乎等）
+  applies_to: [phone]
+  cost_minutes: 10
+  breaks: [text_hit]
+  note: 微信：我→设置→隐私→添加我的方式→关闭手机号；QQ/知乎/微博同理。这是手机号→社交账号这条链的最便宜断点。

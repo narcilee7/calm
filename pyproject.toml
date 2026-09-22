@@ -1,0 +1,19 @@
+[project]
+name = "calm"
+version = "0.1.0"
+description = "人肉攻击者视角的自我隐私审计 CLI"
+requires-python = ">=3.10"
+dependencies = [
+    "typer",
+    "rich",
+    "httpx",
+    "pyyaml",
+    "networkx",
+    "piexif",
+]
+
+[project.optional-dependencies]
+holehe = ["holehe"]
+
+[tool.setuptools]
+packages = ["collectors", "linker", "scorer", "report"]

@@ -1,0 +1,8 @@
+assets.yaml
+.venv/
+findings.jsonl
+chains.json
+report*.md
+report*.html
+__pycache__/
+*.pyc
