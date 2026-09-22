@@ -1,4 +1,4 @@
 include calm/kb/remediation.yaml
-include assets.yaml.example
+include calm/assets.yaml.example
 include LICENSE
 include README.md
