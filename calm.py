@@ -94,10 +94,10 @@ def report(format: str = typer.Option("markdown", "--format", help="报告格式
     fmt = format.lower().strip()
     if fmt == "html":
         out_path = DATA_DIR / "report.html"
-        write_html(out_path, exposure, chains, ranked, unfixable, assets)
+        write_html(out_path, exposure, chains, ranked, unfixable, assets, findings)
     else:
         out_path = DATA_DIR / "report.md"
-        write_report(out_path, exposure, chains, ranked, unfixable, assets)
+        write_report(out_path, exposure, chains, ranked, unfixable, assets, findings)
     n_actions = sum(1 for v in ranked.values() for r in v if r.remediation.fixable)
     console.print(f"[bold]报告已写入 {out_path}，链 {len(chains)} 条，"
                   f"可断点 {n_actions} 个[/bold]")

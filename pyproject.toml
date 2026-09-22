@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 holehe = ["holehe"]
 maigret = ["maigret"]
+embedding = ["scikit-learn"]
 
 [tool.setuptools]
 packages = ["collectors", "linker", "scorer", "report"]

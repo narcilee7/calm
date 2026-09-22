@@ -4,6 +4,7 @@ from urllib.parse import quote
 
 from collectors.base import Finding
 from linker import Chain
+from linker.embedding import cluster_groups
 from scorer import RankedRemediation, exposure_bar
 
 SENS_LABEL = {1: "低", 2: "中", 3: "高"}
@@ -28,8 +29,10 @@ def _chain_title(chain: Chain) -> str:
 def render_report(exposure: float, chains: list[Chain],
                   ranked: dict[int, list[RankedRemediation]],
                   unfixable: list[RankedRemediation],
-                  assets: list[dict]) -> str:
+                  assets: list[dict],
+                  findings: list[Finding] | None = None) -> str:
     total_actions = sum(1 for v in ranked.values() for r in v if r.remediation.fixable)
+    clusters = cluster_groups(findings or [], eps=0.35, min_samples=2)
     lines = [
         f"# calm 报告 — {date.today().isoformat()}",
         "",
@@ -68,6 +71,21 @@ def render_report(exposure: float, chains: list[Chain],
         if not fixable:
             lines.append("（暂无匹配修复项，欢迎向 kb/remediation.yaml 贡献）")
         lines.append("")
+
+        chain_finding_ids = {f"finding:{f.id}" for f in chain.findings}
+        similars: list[str] = []
+        for cid, members in clusters.items():
+            if len(members) < 2:
+                continue
+            member_ids = {f"finding:{f.id}" for f in members}
+            if member_ids & chain_finding_ids:
+                similars.append(f"cluster #{cid}: {', '.join(f'[{f.source}] {f.value}' for f in members)}")
+        if similars:
+            lines.append("🤖 疑似重复/相似（embedding 聚类）：")
+            for s in similars:
+                lines.append(f"  - {s}")
+            lines.append("")
+
     lines.append("## 🟡 不可修复项（诚实区）")
     lines.append("")
     if unfixable:
@@ -92,7 +110,8 @@ def render_report(exposure: float, chains: list[Chain],
 def write_report(path: Path, exposure: float, chains: list[Chain],
                  ranked: dict[int, list[RankedRemediation]],
                  unfixable: list[RankedRemediation],
-                 assets: list[dict]) -> str:
-    text = render_report(exposure, chains, ranked, unfixable, assets)
+                 assets: list[dict],
+                 findings: list[Finding] | None = None) -> str:
+    text = render_report(exposure, chains, ranked, unfixable, assets, findings)
     path.write_text(text, encoding="utf-8")
     return text

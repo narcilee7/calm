@@ -6,6 +6,7 @@ from jinja2 import Template
 
 from collectors.base import Finding
 from linker import Chain
+from linker.embedding import cluster_groups
 from scorer import RankedRemediation, exposure_bar
 
 HTML_TEMPLATE = """<!doctype html>
@@ -73,6 +74,17 @@ HTML_TEMPLATE = """<!doctype html>
         {% endfor %}
       </ol>
     </div>
+    {% set similars = chain_similars(chain, clusters) %}
+    {% if similars %}
+    <div class="actions">
+      <strong>疑似重复/相似（embedding 聚类）：</strong>
+      <ul>
+        {% for s in similars %}
+        <li>{{ s }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
   </div>
   {% endfor %}
 
@@ -135,12 +147,25 @@ def _chain_findings(chain: Chain) -> list[dict]:
     ]
 
 
+def _chain_similars(chain: Chain, clusters: dict[int, list[Finding]]) -> list[str]:
+    chain_ids = {f.id for f in chain.findings}
+    out: list[str] = []
+    for cid, members in clusters.items():
+        if len(members) < 2:
+            continue
+        if any(f.id in chain_ids for f in members):
+            out.append(f"cluster #{cid}: " + ", ".join(f"[{f.source}] {f.value}" for f in members))
+    return out
+
+
 def render_html(exposure: float, chains: list[Chain],
                 ranked: dict[int, list[RankedRemediation]],
                 unfixable: list[RankedRemediation],
-                assets: list[dict]) -> str:
+                assets: list[dict],
+                findings: list[Finding] | None = None) -> str:
     total_actions = sum(1 for v in ranked.values() for r in v if r.remediation.fixable)
     manual_assets = [a for a in assets if a.get("type") in ("nickname", "realname", "phone") and a.get("value")]
+    clusters = cluster_groups(findings or [], eps=0.35, min_samples=2)
     template = Template(HTML_TEMPLATE)
     return template.render(
         report_date=date.today().isoformat(),
@@ -151,16 +176,19 @@ def render_html(exposure: float, chains: list[Chain],
         ranked=ranked,
         unfixable=unfixable,
         manual_assets=manual_assets,
+        clusters=clusters,
         chain_title=_chain_title,
         asset_labels=_asset_labels,
         chain_findings=_chain_findings,
+        chain_similars=_chain_similars,
     )
 
 
 def write_html(path: Path, exposure: float, chains: list[Chain],
                ranked: dict[int, list[RankedRemediation]],
                unfixable: list[RankedRemediation],
-               assets: list[dict]) -> str:
-    text = render_html(exposure, chains, ranked, unfixable, assets)
+               assets: list[dict],
+               findings: list[Finding] | None = None) -> str:
+    text = render_html(exposure, chains, ranked, unfixable, assets, findings)
     path.write_text(text, encoding="utf-8")
     return text
