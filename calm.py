@@ -84,6 +84,9 @@ def report(format: str = typer.Option("markdown", "--format", help="报告格式
     exposure = exposure_score(findings, assets)
 
     chains_path = DATA_DIR / "chains.json"
+    prev_path = DATA_DIR / "chains-prev.json"
+    if chains_path.exists():
+        shutil.copy(chains_path, prev_path)
     payload = {"exposure": round(exposure, 2), "chains": [c.to_dict() for c in chains],
                "links": [l.to_dict() for l in links]}
     chains_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -101,13 +104,24 @@ def report(format: str = typer.Option("markdown", "--format", help="报告格式
 
 
 @app.command()
-def diff() -> None:
-    run_diff()
+def diff(
+    before: Path = typer.Option(None, "--before", help="旧 chains.json 路径（默认 chains-prev.json）"),
+    after: Path = typer.Option(None, "--after", help="新 chains.json 路径（默认 chains.json）"),
+    output: Path = typer.Option(None, "--output", help="diff 输出路径（默认 diff.md）"),
+) -> None:
+    text = run_diff(DATA_DIR, before=before, after=after, out_path=output)
+    console.print(f"[bold]复扫对比已写入 {DATA_DIR / (output.name if output else 'diff.md')}[/bold]")
 
 
 @app.command()
-def task() -> None:
-    run_task()
+def task(
+    asset_type: str = typer.Option(None, "--type", help="资产类型（nickname/realname/phone）"),
+    asset_value: str = typer.Option(None, "--value", help="资产值"),
+    note: str = typer.Option(None, "--note", help="人工任务结果/备注"),
+    list_only: bool = typer.Option(False, "--list", help="仅列出待完成任务"),
+) -> None:
+    text = run_task(DATA_DIR, asset_type=asset_type, asset_value=asset_value, note=note, list_only=list_only)
+    console.print(text)
 
 
 if __name__ == "__main__":

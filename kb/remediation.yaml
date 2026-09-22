@@ -129,3 +129,87 @@
   cost_minutes: 10
   breaks: [text_hit]
   note: 微信：我→设置→隐私→添加我的方式→关闭手机号；QQ/知乎/微博同理。这是手机号→社交账号这条链的最便宜断点。
+
+- id: reg-twitter-x-cleanup
+  title: Twitter/X：改资料、锁推、清理历史推文
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 20
+  breaks: [account_registration, same_nickname]
+  note: 改 display name 和 handle 去重；开启"保护推文"；删除含定位/公司的旧推文；关闭"通过手机号/邮箱找到我"。
+
+- id: reg-youtube-cleanup
+  title: YouTube：频道匿名化、处理评论历史
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 15
+  breaks: [account_registration]
+  note: Google 账号创建 brand account 替代个人频道；删除或设为私密的 playlist/comment；检查"关于"页是否暴露邮箱/社交链接。
+
+- id: reg-instagram-cleanup
+  title: Instagram：改用户名、设私密、清理简介
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 10
+  breaks: [account_registration, same_nickname]
+  note: 用户名改为非唯一标识；设账户为私密；简介删除网站/邮箱；关闭"类似账号推荐"和联系人同步。
+
+- id: reg-facebook-cleanup
+  title: Facebook：锁资料、改用户名、清理公开贴
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 25
+  breaks: [account_registration]
+  note: 设置→隐私：仅好友可见；改自定义 URL 和昵称；用"管理活动"批量删/隐藏旧帖；关闭搜索引擎索引。
+
+- id: reg-linkedin-cleanup
+  title: LinkedIn：资料最小化、关闭"公开可见"
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 15
+  breaks: [account_registration]
+  note: 设置→可见性：关闭公开档案、关闭搜索引擎索引；隐藏邮箱和手机号；删除或匿名化早期动态。
+
+- id: reg-reddit-cleanup
+  title: Reddit：删帖、清评论、换用户名
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 30
+  breaks: [account_registration, same_nickname]
+  note: 用户名无法修改则建新号并弃用旧号；用 PowerDeleteSuite 等工具批量删除发帖/评论历史；profile 不填真实信息。
+
+- id: reg-tiktok-cleanup
+  title: TikTok：私密账号、改用户名、关同步
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 10
+  breaks: [account_registration, same_nickname]
+  note: 设置→隐私：私密账号；关闭"推荐给可能认识的人"；改用户名去重；移除 profile 中的 Instagram/YouTube 外链。
+
+- id: reg-telegram-cleanup
+  title: Telegram：改用户名、关手机号发现、清理公开群
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 10
+  breaks: [account_registration]
+  note: 设置→隐私与安全：手机号仅联系人可见；关闭"通过手机号找到我"；删除公开用户名或改非唯一；退出敏感公开群组。
+
+- id: reg-snapchat-cleanup
+  title: Snapchat： Ghost Mode、改显示名、关快速添加
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 10
+  breaks: [account_registration]
+  note: 地图→Ghost Mode；设置→"在快速添加中显示我"关闭；清理 stories/memories 中的定位信息。
+
+- id: reg-pinterest-cleanup
+  title: Pinterest：私密板、改用户名、关搜索索引
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 15
+  breaks: [account_registration, same_nickname]
+  note: 设置→隐私：隐藏个人资料 from 搜索引擎；board 改为私密；改用户名去重；删除含真实信息的 pin 描述。
+
+- id: reg-twitch-cleanup
+  title: Twitch：改用户名、清过往直播/VOD、关推荐
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 15
+  breaks: [account_registration, same_nickname]
+  note: 设置→个人资料：改用户名（60 天一次）；删除旧 VOD 和 clip；关闭"推荐频道"和联系人同步；面板不挂真实社交链接。
+
+- id: reg-discord-cleanup
+  title: Discord：改用户名、关好友发现、清理服务器
+  applies_to: [account_registration, D2, D4]
+  cost_minutes: 10
+  breaks: [account_registration]
+  note: 用户名改为非唯一标识；设置→隐私：关闭"允许通过手机号/邮箱找到我"；退出敏感公开服务器；删除含真实信息的旧消息。
