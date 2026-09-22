@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-from collectors.base import Finding
+from ..collectors.base import Finding
 
 PHONE_MIN_DIGITS = 7
 

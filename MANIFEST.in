@@ -1,0 +1,6 @@
+include calm/kb/remediation.yaml
+include assets.yaml.example
+include LICENSE
+include README.md
+include DESIGN.md
+include PROGRESS.md

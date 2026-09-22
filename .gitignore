@@ -1,8 +1,14 @@
 assets.yaml
 .venv/
 findings.jsonl
-chains.json
+chains*.json
 report*.md
 report*.html
+tasks.jsonl
+tasks.md
+diff.md
 __pycache__/
 *.pyc
+*.egg-info/
+dist/
+build/

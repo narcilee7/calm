@@ -2,10 +2,10 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import quote
 
-from collectors.base import Finding
-from linker import Chain
-from linker.embedding import cluster_groups
-from scorer import RankedRemediation, exposure_bar
+from ..collectors.base import Finding
+from ..linker import Chain
+from ..linker.embedding import cluster_groups
+from ..scorer import RankedRemediation, exposure_bar
 
 SENS_LABEL = {1: "低", 2: "中", 3: "高"}
 

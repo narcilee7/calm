@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from collectors.base import load_findings
+from ..collectors.base import load_findings
 
 
 def _load_tasks(path: Path) -> list[dict]:

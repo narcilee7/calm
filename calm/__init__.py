@@ -7,16 +7,16 @@ import typer
 import yaml
 from rich.console import Console
 
-from collectors import (CollectorRunner, D1Search, D2Holehe, D3Hibp, D4Maigret,
-                        D5Exif, append_findings, load_findings)
-from linker import apply_f2f_rules, apply_rules, build_graph, chains_from_graph
-from report.diff import run_diff
-from report.html import write_html
-from report.markdown import write_report
-from report.task import run_task
-from scorer import exposure_score, load_remediations, rank_remediations
+from .collectors import (CollectorRunner, D1Search, D2Holehe, D3Hibp, D4Maigret,
+                         D5Exif, append_findings, load_findings)
+from .linker import apply_f2f_rules, apply_rules, build_graph, chains_from_graph
+from .report.diff import run_diff
+from .report.html import write_html
+from .report.markdown import write_report
+from .report.task import run_task
+from .scorer import exposure_score, load_remediations, rank_remediations
 
-app = typer.Typer(add_completion=False, help="calm：人肉攻击者视角的自我隐私审计")
+app = typer.Typer(add_completion=False, help="calm：公网隐私审计 CLI")
 console = Console()
 DATA_DIR = Path(".")
 

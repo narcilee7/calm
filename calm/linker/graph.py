@@ -2,9 +2,9 @@ from dataclasses import dataclass, field
 
 import networkx as nx
 
-from collectors.base import Finding
-from linker.rules import Link, normalize
-from scorer.exposure import node_exposure
+from ..collectors.base import Finding
+from ..linker.rules import Link, normalize
+from ..scorer.exposure import node_exposure
 
 
 @dataclass

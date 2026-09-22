@@ -1,8 +1,28 @@
 [project]
-name = "calm"
+name = "calm-privacy"
 version = "0.1.0"
-description = "人肉攻击者视角的自我隐私审计 CLI"
+description = "公网隐私审计 CLI"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "calm contributors"},
+]
 requires-python = ">=3.10"
+keywords = ["privacy", "osint", "self-audit", "security", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Security",
+    "Topic :: Utilities",
+]
 dependencies = [
     "typer",
     "rich",
@@ -18,5 +38,21 @@ holehe = ["holehe"]
 maigret = ["maigret"]
 embedding = ["scikit-learn"]
 
+[project.scripts]
+calm = "calm:app"
+
+[project.urls]
+Homepage = "https://github.com/narcilee7/calm"
+Repository = "https://github.com/narcilee7/calm"
+Issues = "https://github.com/narcilee7/calm/issues"
+
 [tool.setuptools]
-packages = ["collectors", "linker", "scorer", "report"]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["calm*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+calm = ["kb/remediation.yaml", "assets.yaml.example"]

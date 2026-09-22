@@ -4,10 +4,10 @@ from urllib.parse import quote
 
 from jinja2 import Template
 
-from collectors.base import Finding
-from linker import Chain
-from linker.embedding import cluster_groups
-from scorer import RankedRemediation, exposure_bar
+from ..collectors.base import Finding
+from ..linker import Chain
+from ..linker.embedding import cluster_groups
+from ..scorer import RankedRemediation, exposure_bar
 
 HTML_TEMPLATE = """<!doctype html>
 <html lang="zh-CN">

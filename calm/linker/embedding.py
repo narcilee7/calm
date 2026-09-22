@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Optional
 
-from collectors.base import Finding
+from ..collectors.base import Finding
 
 
 def _text(f: Finding) -> str:

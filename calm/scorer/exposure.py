@@ -1,4 +1,4 @@
-from collectors.base import Finding
+from ..collectors.base import Finding
 
 ASSET_SENSITIVITY = {"phone": 3, "id": 3, "realname": 3, "email": 2,
                      "nickname": 1, "avatar": 1}
