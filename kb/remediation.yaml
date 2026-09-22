@@ -41,66 +41,66 @@
 
 - id: reg-github-anonymize
   title: GitHub：改 noreply 邮箱 + 清理个人资料
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 10
   breaks: [account_registration, same_email]
   note: Settings→Emails 勾选 "Keep my email addresses private"，提交改用 username@users.noreply.github.com；Profile 中删除真实姓名/公司/位置；检查历史 commit 是否含真实邮箱（git log --author）。
 
 - id: reg-weibo-cleanup
   title: 微博：注销或匿名化历史账号
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 15
   breaks: [account_registration, same_nickname]
   note: 不再用的账号直接注销（设置→账号与安全→注销）。保留则：改昵称去重、删除含定位/学校的旧微博、关闭"允许通过手机号/邮箱找到我"。
 
 - id: reg-zhihu-cleanup
   title: 知乎：匿名化回答与个人信息
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 15
   breaks: [account_registration, same_nickname]
   note: 设置→隐私：关闭"可通过手机号找到我"；昵称改为非唯一标识；逐个检查高赞回答是否暴露学校/公司/位置，必要时匿名化。
 
 - id: reg-bilibili-cleanup
   title: B 站：改资料 + 清历史动态
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 10
   breaks: [account_registration, same_nickname]
   note: 个人空间改昵称/签名去除真实信息；批量删除早期动态（可能含学校定位）；隐私设置关闭手机号搜索。
 
 - id: reg-douban-cleanup
   title: 豆瓣：注销僵尸账号 + 清理小组发言
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 20
   breaks: [account_registration, same_nickname]
   note: 豆瓣账号历史发言关联度高，优先注销不用的；在用的删除含真名/学校的帖子和日记；城市/公司字段清空。
 
 - id: reg-generic-dormant-delete
   title: 通用：注销不再登录的站点账号
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 10
   breaks: [account_registration]
-  note: D2 探出但你不再用的站点：justdelete.me 查注销入口。 dormant 账号是攻击者的拼图素材，注销比改资料更彻底。
+  note: D2/D4 探出但你不再用的站点：justdelete.me 查注销入口。 dormant 账号是攻击者的拼图素材，注销比改资料更彻底。
 
 - id: reg-generic-email-alias
   title: 注册专用邮箱别名，切断邮箱↔站点的横向关联
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 20
   breaks: [same_email]
   note: 用一个专用别名（或子域名 catch-all）注册新服务，主邮箱不外显。已注册站点逐步改绑。断的是"同邮箱"这条 link 的横向扩展能力。
 
 - id: reg-generic-username-decouple
   title: 各平台使用不同昵称，打破昵称横向关联
-  applies_to: [account_registration, same_nickname, D2]
+  applies_to: [account_registration, same_nickname, D2, D4]
   cost_minutes: 15
   breaks: [same_nickname]
   note: 人肉搜索的第一轴是"同一昵称跨平台"。重要平台（求职/金融/主社交）用互不相干的昵称；一次性改完，别逐平台试探。
 
 - id: reg-gravatar-check
   title: Gravatar：头像与邮箱绑定关系检查
-  applies_to: [account_registration, D2]
+  applies_to: [account_registration, D2, D4]
   cost_minutes: 5
   breaks: [account_registration, same_email]
-  note: Gravatar 头像跨站复用，把邮箱和公开形象绑死。若 D2 命中：更换头像或删除 profile，阻断"头像 hash"关联路径。
+  note: Gravatar 头像跨站复用，把邮箱和公开形象绑死。若 D2/D4 命中：更换头像或删除 profile，阻断"头像 hash"关联路径。
 
 - id: search-self-audit-nickname
   title: 搜索引擎自查：昵称

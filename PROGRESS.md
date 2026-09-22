@@ -1,65 +1,63 @@
 # calm 实现进度
 
-> 目标：DESIGN.md M1 里程碑（D2 holehe + D3 HIBP + D5 EXIF + Linker 基础规则 + Markdown 报告）。
+> 目标：DESIGN.md M2 里程碑（D1 Brave 搜索 + D2 holehe + D3 HIBP + D4 maigret + D5 EXIF + Linker 规则 + Markdown/HTML 报告 + 双评分 CutScore 排序）。
 > 最后更新：2026-09-22
 
-## ✅ 已完成（代码全部落盘，854 行 / 16 个文件）
+## ✅ 已完成
 
 ```
 calm/
 ├── pyproject.toml / .gitignore / assets.yaml.example
-├── calm.py                  # Typer CLI：init / scan / report / diff / task，--data-dir 全局选项
+├── calm.py                  # Typer CLI：init / scan / report(--format) / diff / task
 ├── collectors/
-│   ├── base.py              # Finding dataclass、Collector ABC、编排器、OwnershipError 合规闸门
-│   ├── d2_holehe.py         # 编程式接入 holehe.modules，polite 模式并发 1 + 1s 间隔
-│   ├── d3_hibp.py           # breachedaccount API，带 key/User-Agent；无 key 优雅跳过
-│   └── d5_exif.py           # piexif 解析 GPS/Make/Model/序列号/时间
+│   ├── base.py              # Finding dataclass、Collector ABC、编排器、OwnershipError、去重
+│   ├── d1_search.py         # Brave Search API，查询 nickname/realname
+│   ├── d2_holehe.py         # holehe 编程式接入，单 probe 5s 超时
+│   ├── d3_hibp.py           # HIBP breachedaccount API
+│   ├── d4_maigret.py        # maigret CLI 调用，Top N 站点，跳过非 ASCII 昵称
+│   └── d5_exif.py           # piexif 解析 GPS/Make/Model/序列号
 ├── linker/
-│   ├── rules.py             # same_email / same_nickname / text_hit（头像 hash 规则留接口）
+│   ├── rules.py             # same_email / same_nickname / same_avatar / text_hit / same_device / same_gps
 │   └── graph.py             # networkx 连通分量 → Chain
 ├── scorer/
-│   ├── exposure.py          # §6 公式：Σ(sensitivity × reach × conf)，归一化 0-10
-│   └── cutscore.py          # broken_chains × chain_weight / op_cost
-├── kb/remediation.yaml      # 修复知识库
+│   ├── exposure.py          # §6 暴露分
+│   └── cutscore.py          # §6 断链分与修复排序
+├── kb/remediation.yaml      # 修复知识库（含 D2/D4 account_registration）
 └── report/
-    ├── markdown.py          # §7 版式（暴露条/链/修复优先级/诚实区/人工任务）
-    └── html.py / diff.py / task.py   # M2/M3 诚实占位
+    ├── markdown.py          # §7 Markdown 版式
+    ├── html.py              # §7 HTML 版式
+    ├── diff.py / task.py    # M3 占位
 ```
-
-工程环境：仓库内 `.venv`（Python 3.14）已装好全部依赖含 holehe。
-测试环境：`/tmp/calm-e2e/` 已备好测试 assets.yaml（email + nickname）和带 GPS EXIF 的测试照片。
 
 ## ✅ 已验证
 
 - 全部文件语法通过（py_compile）
-- CLI 正常加载，`--help` 输出五个子命令
-- **端到端 `scan` 已跑通**：D2 真实网络探测完成（example.com 邮箱返回 0 条注册态）、D3 无 key 时优雅降级提示、D5 GPS/设备抓取正常
-- **`report` 已跑通**：report.md 符合 DESIGN §7 版式，chains.json 合法，暴露面/链/修复优先级/诚实区/人工任务均输出
-- **去重已验证**：重复 `scan` 产生 `新增 0 条，去重跳过 7 条`
-- **holehe 编程式接入已确认**：直接调用 `holehe.core.import_submodules` + probe 函数可行；每个 probe 已加 5s 超时避免单站挂死
+- CLI 正常加载，`calm report --format html` 可用
+- 端到端 `scan` 跑通：D1/D2/D3/D4/D5 全部注册并产出 finding
+- D4 maigret 真实命中：testuser123 → YouTube/Twitter
+- `report` 同时输出 Markdown 与 HTML，链 2 条、可断点 9 个
+- CutScore 排序生效：链 #1 第一条修复动作是"关闭相机 App 的位置记录"
 
-## 🔧 本次修复/增强
+## 🔧 M2 相对于 M1 的改动
 
-- `collectors/d5_exif.py`：给 GPS/设备 finding 写入 `asset_value`（照片路径），使 avatar 资产能关联
-- `linker/rules.py`：实现 `same_avatar` 规则；新增 finding-finding 规则 `same_device` / `same_gps`，跨文件相同设备可合并成链
-- `linker/__init__.py`：导出 `apply_f2f_rules`
-- `calm.py`：`report` 阶段合并 asset-finding 与 finding-finding 链接
-- `collectors/d2_holehe.py`：单个 probe 增加 5s 超时，避免全量扫描被慢站拖死
-- `report/markdown.py`：链详情聚合显示，资产用文件名、同 value finding 显示出现次数与文件列表
-- `/tmp/calm-e2e/assets.yaml`：补充 3 个 avatar 资产用于 D5 链路验证
+- 新增 `collectors/d1_search.py`：Brave Search API 查询 nickname/realname
+- 新增 `collectors/d4_maigret.py`：subprocess 调用 maigret，解析 simple JSON 报告，按 `maigret_top_sites` 限制站点数
+- 新增 `report/html.py`：Jinja2 模板生成响应式 HTML 报告
+- `calm.py`：
+  - `scan` 注册 D1/D4
+  - `report` 增加 `--format markdown|html` 选项
+- `pyproject.toml`：新增 `jinja2` 依赖与 `maigret` optional dependency
+- `assets.yaml.example`：新增 `keys.brave` 与 `settings.maigret_top_sites`
+- `kb/remediation.yaml`：所有 account_registration 修复项 applies_to 加入 D4
+- `collectors/d4_maigret.py`：自动检测 venv 内的 maigret 可执行文件；非 ASCII 昵称跳过
 
 ## ▶️ 续作步骤
 
-M1 已收工，下一里程碑是 **M2（D1 Brave 搜索 + D4 maigret + HTML 报告）**。
+M2 已收工，下一里程碑是 **M3（diff 复扫 + 人工任务卡片 + kb 扩至 30 平台）**。
 
-如需继续 M2，可从以下开始：
+如需继续 M3，可从以下开始：
 
-1. 申请 Brave Search API key 并填入 `assets.yaml` 的 `keys.brave`
-2. 实现 `collectors/d1_search.py`（Brave API 查询昵称，落盘结果）
-3. 接入/裁剪 `maigret` 作为 `collectors/d4_maigret.py`
-4. 补全 `report/html.py`，让 `calm report --format html` 可用
-
-## 备注
-
-- 所有改动未 commit（工作区全是 untracked 文件，验证通过后再由用户决定提交）
-- holehe 真实扫描只查注册态、并发 1 + 1s 间隔，符合设计公理 2（被动源优先）
+1. 实现 `report/diff.py`：对比两次 `chains.json`，输出修复前后链的变化
+2. 实现 `report/task.py`：接收并持久化人工任务结果（`calm task --submit`）
+3. 扩展 `kb/remediation.yaml` 到 30 条平台指引
+4. 添加 `calm diff` 子命令的真实逻辑

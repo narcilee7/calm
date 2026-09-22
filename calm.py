@@ -7,10 +7,11 @@ import typer
 import yaml
 from rich.console import Console
 
-from collectors import (CollectorRunner, D2Holehe, D3Hibp, D5Exif,
-                        append_findings, load_findings)
+from collectors import (CollectorRunner, D1Search, D2Holehe, D3Hibp, D4Maigret,
+                        D5Exif, append_findings, load_findings)
 from linker import apply_f2f_rules, apply_rules, build_graph, chains_from_graph
 from report.diff import run_diff
+from report.html import write_html
 from report.markdown import write_report
 from report.task import run_task
 from scorer import exposure_score, load_remediations, rank_remediations
@@ -51,8 +52,10 @@ def init() -> None:
 def scan() -> None:
     config = _load_config()
     runner = CollectorRunner(config, console)
+    runner.register(D1Search(config, console))
     runner.register(D2Holehe(config, console))
     runner.register(D3Hibp(config, console))
+    runner.register(D4Maigret(config, console))
     runner.register(D5Exif(config, console))
     findings = asyncio.run(runner.run())
     added, dup = append_findings(DATA_DIR / "findings.jsonl", findings)
@@ -60,7 +63,7 @@ def scan() -> None:
 
 
 @app.command()
-def report() -> None:
+def report(format: str = typer.Option("markdown", "--format", help="报告格式：markdown 或 html")) -> None:
     config = _load_config()
     findings = load_findings(DATA_DIR / "findings.jsonl")
     if not findings:
@@ -85,9 +88,15 @@ def report() -> None:
                "links": [l.to_dict() for l in links]}
     chains_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    write_report(DATA_DIR / "report.md", exposure, chains, ranked, unfixable, assets)
+    fmt = format.lower().strip()
+    if fmt == "html":
+        out_path = DATA_DIR / "report.html"
+        write_html(out_path, exposure, chains, ranked, unfixable, assets)
+    else:
+        out_path = DATA_DIR / "report.md"
+        write_report(out_path, exposure, chains, ranked, unfixable, assets)
     n_actions = sum(1 for v in ranked.values() for r in v if r.remediation.fixable)
-    console.print(f"[bold]报告已写入 {DATA_DIR / 'report.md'}，链 {len(chains)} 条，"
+    console.print(f"[bold]报告已写入 {out_path}，链 {len(chains)} 条，"
                   f"可断点 {n_actions} 个[/bold]")
 
 

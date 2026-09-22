@@ -26,7 +26,10 @@ assets:
 keys:
   # https://haveibeenpwned.com/API/Key 申请（~$3.5/月）；null 则 D3 跳过并提示
   hibp: null
+  # https://brave.com/search/api/ 免费档 2000 次/月；null 则 D1 跳过并提示
+  brave: null
 
 settings:
-  exif_dirs: []      # 要扫的照片目录，如 ["/Users/you/Pictures"]
-  polite: true       # holehe 礼貌延迟开关（并发 1、每次调用间隔 ≥1s）
+  exif_dirs: []            # 要扫的照片目录，如 ["/Users/you/Pictures"]
+  polite: true             # holehe 礼貌延迟开关（并发 1、每次调用间隔 ≥1s）
+  maigret_top_sites: 10    # D4 maigret 只查 Top N 站点，避免全量 5000+ 站太慢

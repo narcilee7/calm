@@ -10,10 +10,12 @@ dependencies = [
     "pyyaml",
     "networkx",
     "piexif",
+    "jinja2",
 ]
 
 [project.optional-dependencies]
 holehe = ["holehe"]
+maigret = ["maigret"]
 
 [tool.setuptools]
 packages = ["collectors", "linker", "scorer", "report"]
